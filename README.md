@@ -1,5 +1,5 @@
 # My Doctor Chat App
-A prototype of simple chat app between doctor and patient with socket io
+A prototype of simple chat app between a doctor and a patient using React Native, NodeJs + SocketIO, and Golang+MongoDB
 
 # installation
 ## react-native 

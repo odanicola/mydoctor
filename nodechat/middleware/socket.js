@@ -1,6 +1,8 @@
 const { createRoom } = require('../api/v1/room')
+const { createMessage, loadMessages } = require('../api/v1/message')
 const { timer, countDown } = require('../helpers/index')
 const uuid = require('uuid')
+
 module.exports = (app,io) => {
     io.on("connection", function (socket) {
         socket.on("join", async ({name,room,description,users}, callback) => {
@@ -86,11 +88,58 @@ module.exports = (app,io) => {
             callback()
         }) // on join
 
-        socket.on("send", (data, callback) => {
-            console.log(data, data[0].room)
-            socket.emit('message', data[0]);
-            socket.broadcast.to(data[0].room).emit('message', data[0]);
-            callback(data[0])
+        // Load message 
+        socket.on("loadmessages", async (data, callback) => {
+            let room = data.room 
+            console.log('room', room)
+            const loadmessages = await loadMessages(room)
+
+            // console.log('loadmessages', loadmessages)
+            if (loadmessages.error) return callback({
+                status: false,
+                message: loadmessages.error
+            })
+
+            var result = [];
+            var messages = loadmessages.data
+            if (messages.length > 0) {
+                for (let index = 0; index < messages.length; index++) {
+                    const element = messages[index];
+                    var setmessage = {
+                        _id: element._id,
+                        room: element.room,
+                        user: element.user,
+                        text: element.text,
+                        createdAt: element.created_at
+                    }
+
+                    result.push(setmessage)
+                }
+            }
+
+            callback({
+                status: true,
+                message: result
+            })
+        })
+
+        // Send message
+        socket.on("send", async (data, callback) => {
+            console.log(data, data.room)
+
+            const createmessage = await createMessage(data)
+
+            if (createmessage.error) return callback({
+                status: false,
+                message: createmessage.error
+            })
+
+            socket.emit('message', data);
+            socket.broadcast.to(data.room).emit('message', data);
+            callback({
+                status: true,
+                message: data
+            })
         });
 
         socket.on('leaveroom', ({room,name}, callback) => {

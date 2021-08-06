@@ -20,5 +20,6 @@ func Setup() *gin.Engine {
 
 	// Messages
 	v1.POST("/message", controllers.CreateMessage)
+	v1.GET("/message", controllers.LoadMessages)
 	return app
 }

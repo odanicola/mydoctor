@@ -8,11 +8,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func CreateMessage(c *gin.Context) {
-	json := model.Messages{}
-	err := c.ShouldBindJSON(&json)
+	input := model.Messages{}
+	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -21,10 +22,10 @@ func CreateMessage(c *gin.Context) {
 
 	message := &model.Messages{}
 	coll := mgm.Coll(message)
-
-	message.RoomId = json.RoomId
-	message.UserId = json.UserId
-	message.Message = json.Message
+	message.TextID = input.TextID
+	message.Room = input.Room
+	message.User = input.User
+	message.Text = input.Text
 
 	err = coll.Create(message)
 
@@ -35,4 +36,21 @@ func CreateMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, message)
+}
+
+func LoadMessages(c *gin.Context) {
+	room := c.Query("room")
+	log.Println(room)
+
+	messages := []model.Messages{}
+	msgColl := mgm.Coll(&model.Messages{})
+	msgErr := msgColl.SimpleFind(&messages, bson.M{"room": room})
+
+	if msgErr != nil {
+		log.Println(msgErr.Error())
+		return
+	}
+	log.Println(messages)
+
+	c.JSON(http.StatusOK, messages)
 }

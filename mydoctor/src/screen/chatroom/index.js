@@ -20,6 +20,7 @@ class Chat extends React.Component {
    }
 
    async componentDidUpdate(prevProps, prevState) {
+    //    console.log('didupdate',this.props.chat.messages)
        if (prevState.messages.length !== this.props.chat.messages.length) {
             // await this.onLoadMessages()
        }
@@ -38,7 +39,8 @@ class Chat extends React.Component {
    }
 
    onSend = async (messages) => {
-        messages[0].room = this.props.route.params.room
+        messages = messages.shift()
+        messages.room = this.props.route.params.room
         await this.props.onSendMessage(messages)
    }
 
@@ -88,6 +90,7 @@ class Chat extends React.Component {
                     onSend={messages => this.onSend(messages)}
                     user={{
                         _id: route.params.id,
+                        name: route.params.name
                     }}
                     isTyping={true}
                     textInputStyle={{ color: 'black' }}

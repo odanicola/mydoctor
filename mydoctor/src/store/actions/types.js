@@ -13,6 +13,7 @@ export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const LOAD_MESSAGES = 'LOAD_MESSAGES';
 export const JOIN_CHATROOM = 'JOIN_CHATROOM';
+export const LEAVE_CHATROOM = 'LEAVE_CHATROOM';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';
 export const CHAT_ERROR = 'CHAT_ERRO';
 export const CHAT_DISCONNECT = 'CHAT_DISCONNECT';

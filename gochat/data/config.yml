@@ -1,7 +1,7 @@
 database:
   # username: "user"
   # password: "password"
-  dbname: "heroes"
+  dbname: "mydoctor"
   host: "127.0.0.1"
   port: "27017"
   max_lifetime: 7200

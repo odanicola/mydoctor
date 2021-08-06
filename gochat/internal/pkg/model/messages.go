@@ -6,7 +6,13 @@ import (
 
 type Messages struct {
 	mgm.DefaultModel `bson:",inline"`
-	RoomId           string `json:"room_id" binding:"required"`
-	UserId           string `json:"user_id" binding:"required"`
-	Message          string `json:"message" binding:"required"`
+	TextID           string       `json:"_id" binding:"required"`
+	Room             string       `json:"room" binding:"required"`
+	User             MessagesUser `json:"user" binding:"required"`
+	Text             string       `json:"text" binding:"required"`
+}
+
+type MessagesUser struct {
+	ID   string `json:"_id" binding:"required"`
+	Name string `json:"name" binding:"required"`
 }

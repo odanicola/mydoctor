@@ -4,6 +4,7 @@ import {
     CHAT_ERROR,
     SEND_MESSAGE,
     CHAT_DISCONNECT,
+    LEAVE_CHATROOM
   } from '../actions/types';
 
   initialState = {
@@ -18,6 +19,11 @@ import {
 
   export default (state = initialState, action) => {
     switch (action.type) {
+        case LEAVE_CHATROOM: 
+            return {
+                ...state,
+                messages: action.payload.messages
+            }
         case SEND_MESSAGE: 
             return {
                 ...state,
@@ -32,17 +38,24 @@ import {
         case JOIN_CHATROOM:
             var messages = filter([...state.messages, action.payload.messages],'_id')
             messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-            console.log('join room', messages)
+            // console.log('join room', messages)
             return {
                 ...state,
                 messages: messages
             }
         case LOAD_MESSAGES: 
-            var messages = filter([...state.messages, action.payload.messages])
+            var messages = action.payload.messages
             messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
-            return {
+            
+            var update = state.messages
+            for (let index = 0; index < messages.length; index++) {
+                const element = messages[index];
+                update.push(element)
+            }
+
+            return {    
                 ...state,
-                messages: messages
+                messages: update
             }
         default:
             return state;

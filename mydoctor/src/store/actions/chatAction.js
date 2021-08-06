@@ -4,7 +4,8 @@ import {
     JOIN_CHATROOM,
     CHAT_ERROR,
     SEND_MESSAGE,
-    LOAD_MESSAGES
+    LOAD_MESSAGES,
+    LEAVE_CHATROOM
 } from '../actions/types'
 
 const socket = IO(CONSTANT.SOCKET_URL, {
@@ -29,6 +30,18 @@ export const onJoinChatRoom = (data) => {
                 });
             }
         });
+
+        await socket.emit('loadmessages', data, callback => {
+            if (callback.status) {
+                // console.log('callback message', callback.message)
+                dispatch({
+                    type: LOAD_MESSAGES,
+                    payload: {
+                        messages: callback.message
+                    },
+                });
+            }
+        })
         
         await socket.on('message', message => {
             // console.log('message', message)
@@ -78,6 +91,12 @@ export const onLeaveRoom = (data) => {
         console.log('room', data)
         socket.emit('leaveroom', data, callback => {
             console.log('has disconnected', callback)
+            dispatch({
+                type: LEAVE_CHATROOM,
+                payload: {
+                    messages: []
+                }
+            })
         })
     }
 }

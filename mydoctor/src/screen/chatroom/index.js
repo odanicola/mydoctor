@@ -56,6 +56,10 @@ class Chat extends React.Component {
         }, 300);
    }
 
+   filter = (array,key) => {
+        return [...new Map(array.map(item => [item[key], item])).values()]
+   }
+
    render() {
        const { messages } = this.state
        const { route, chat } = this.props
@@ -86,7 +90,7 @@ class Chat extends React.Component {
                    </View>
                </SafeAreaView>
                <GiftedChat
-                    messages={chat.messages}
+                    messages={this.filter(chat.messages, '_id')}
                     onSend={messages => this.onSend(messages)}
                     user={{
                         _id: route.params.id,

@@ -1,0 +1,22 @@
+database:
+  # username: "user"
+  # password: "password"
+  dbname: "heroes"
+  host: "127.0.0.1"
+  port: "27017"
+  max_lifetime: 7200
+  max_open_conns: 150
+  max_idle_conns: 50
+
+server:
+  port: "8082"
+  secret: "jdnfksdmfksda"
+  JwtSecret: "P8npuppnW27OWtc68YhUiI6ij8HtbF986VNFirlnyVhw9oFxY9EmUNbd9QU4u0Vj"
+  TokenDuration: 1
+  AppName: "Account Management Service"
+  mode: "debug"
+
+session:
+  maxAge: 2592000
+  updateAge: 2592000
+

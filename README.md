@@ -1,4 +1,4 @@
-# mydoctor
+# My Doctor Chat App
 A prototype of simple chat app between doctor and patient with socket io
 
 # installation

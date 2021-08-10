@@ -13,6 +13,12 @@ module.exports = (app,io) => {
                 room: room
             }
             console.log('user: ', user)
+
+            // if (user.room == 'Room1') callback({
+            //     status: false,
+            //     message: "You cannot join the room, because you already left"
+            // })
+
             socket.join(user.room)
             
             const payload = {
@@ -152,7 +158,7 @@ module.exports = (app,io) => {
                 createdAt: new Date(),
                 system: true,
             })
-            // socket.disconnect(true)
+            socket.disconnect(true)
             callback('disconnected')
             console.log('room', socket.rooms)
         });

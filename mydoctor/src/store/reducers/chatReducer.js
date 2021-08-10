@@ -53,8 +53,6 @@ import {
                 update.push(element)
             }
             update = filter(update,'_id')
-            console.log('dd')
-            console.log('reducer', update)
             return {    
                 ...state,
                 messages: update

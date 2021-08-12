@@ -3,12 +3,17 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import CONSTANT from '../config'
 import Snackbar from 'react-native-snackbar'
 import Helper from '../helper'
+import * as UserActions from '../store/actions/userAction'
+import { useDispatch, useStore } from 'react-redux'
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [type, setType] = useState(null);
+    const [specialist, setSpecialist] = useState(null);
+    const dispatch = useDispatch()
+    const store = useStore()
 
     GoogleSignin.configure({
         scopes: ['profile','email'],
@@ -18,18 +23,41 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
        
-    }, [user,type])
-    
+    }, [user,type,specialist])
+
     const setTypeUser = async (type) => {
         console.log('set type', type)
-        await Helper.setUserType(type)
-        setType(type)
+        const getUser = await Helper.getUserData()
+        const saveUser = {
+            name: getUser.name,
+            photo: getUser.photo,
+            email: getUser.email,
+            online: "true",
+            type: type
+        }
+        await dispatch(UserActions.onCreateUser(saveUser))
+        const userServer = store.getState().user.user 
+        console.log('userserver', userServer)
+        
+        if (userServer.id != undefined) {
+            getUser.id = userServer.id 
+            console.log('user update', getUser)
+            setUser(getUser)
+            await Helper.storeUserData(getUser)
+            await Helper.setUserType(type)
+            setType(type)
+        } else {
+            showSnackBar('Failed to save user to server')
+            await setLogout()
+        }
     }
 
     const setLogout = async () => {
         try {
+            await dispatch(UserActions.onUserDisconnect())
             await GoogleSignin.signOut()
             await Helper.removeKeys()
+            
             const getType = await Helper.getUserType()
             setType(getType)
             const getUser = await Helper.getUserData()
@@ -43,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await GoogleSignin.hasPlayServices()
             const userInfo = await GoogleSignin.signIn()
+            console.log('userInfo', userInfo)
             setUser(userInfo.user)
             Helper.storeUserData(userInfo.user)
         } catch (error) {
@@ -78,7 +107,8 @@ export const AuthProvider = ({ children }) => {
                 await setTypeUser(type)
             }, type, setType, logout: async () => {
                 await setLogout()
-            }
+            },
+            specialist, setSpecialist
         }}>
             {children}
         </AuthContext.Provider>

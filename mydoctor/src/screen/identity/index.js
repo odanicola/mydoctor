@@ -6,7 +6,7 @@ import { AuthContext } from '../../navigation/AuthProvider'
 const Identity = () => {
     const { selectType } = useContext(AuthContext);
     const theme = useTheme()
-
+    
     return (
         <View style={{
             flex: 1,

@@ -3,6 +3,7 @@ import { AuthContext } from './AuthProvider';
 import HomeStack from './HomeStack'
 import AuthStack from './AuthStack'
 import IdentityStack from './IdentityStack'
+import SpecialistStack from './SpecialistStack'
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'react-native'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -10,7 +11,7 @@ import Helper from '../helper'
 import { Loading } from '../component'
 
 export default function Routes() {
-    const { user, setUser, type, setType } = useContext(AuthContext);
+    const { user, setUser, type, setType, specialist, setSpecialist } = useContext(AuthContext);
     const [loading, setLoading] = useState(false)
     
     useEffect(() => {
@@ -51,6 +52,7 @@ export default function Routes() {
     }
 
     console.log('type', type)
+    console.log('specialist', specialist)
 
     return (
         <NavigationContainer>
@@ -58,7 +60,11 @@ export default function Routes() {
         {
             user && user.id ?
             type ? 
-            <HomeStack /> : 
+            type == 'doctor' ?
+            specialist ? 
+            <HomeStack /> :
+            <SpecialistStack /> : 
+            <HomeStack />:
             <IdentityStack /> :
             <AuthStack />
         }

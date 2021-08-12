@@ -19,9 +19,9 @@ const Login = props => {
         console.log('connected to socket', props.socket.connected)
     }
 
-    const _signIn = async () => {
+    const _signIn = () => {
         setIsSigninInProgress(true)
-        await login()
+        login()
         setIsSigninInProgress(false)
     }
 
@@ -37,7 +37,7 @@ const Login = props => {
                 justifyContent: 'flex-start'
             }}>
                 <Text style={{ color: 'white', fontSize: 18 }}>Find</Text>
-                <Text style={{ color: 'white', fontSize: 18 }}>Your Nearest</Text>
+                <Text style={{ color: 'white', fontSize: 18 }}>Your Best</Text>
                 <Text style={{ color: 'white', fontSize: 42 }}>Doctors.</Text>
             </View>
             <View style={{

@@ -22,3 +22,8 @@ export const CHAT_DISCONNECT = 'CHAT_DISCONNECT';
 export const CONNECT = 'CONNECT';
 export const CONNECTED = 'CONNECTED';
 export const DISCONNECT = 'DISCONNECT';
+
+/** */
+export const CREATEUSER = 'CREATEUSER'
+export const UPDATEUSER = 'UPDATEUSER'
+export const USERDISCONNECT = 'USERDISCONNECT'

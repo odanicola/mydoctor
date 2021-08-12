@@ -37,7 +37,9 @@ const Home = props => {
         if (doctors && doctors.length > 0) {
             doctors.map((item,index) => {
                 render.push(
-                    <Card key={item.id}>
+                    <Card key={item.id} onPress={() => {
+                        props.navigation.navigate('ProfileDoctor', item)
+                    }}>
                         <Card.Content>
                             <View style={{
                                 flexDirection: 'row'
@@ -49,9 +51,11 @@ const Home = props => {
                                     }}>
                                         <View style={{ marginHorizontal: 10, flex: 1 }}>
                                             <Text style={{ fontSize: 16 }}>{item.name}</Text>
-                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis {item.specialist}</Text>
+                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialist {item.specialist}</Text>
                                         </View>
-                                        <Button mode="outlined">{parseInt(item.price) > 0 ? item.price : 'Free'}</Button>
+                                        <Button onPress={() => {
+                                            props.navigation.navigate('ProfileDoctor', item)
+                                        }} mode="outlined">{parseInt(item.price) > 0 ? item.price : 'Free'}</Button>
                                     </View>
                                 </View>
                             </View>
@@ -120,11 +124,11 @@ const Home = props => {
                 </Card>
             </View>
             
-            <ScrollView style={{
-                padding: 15
-            }} refreshControl={ <RefreshControl onRefresh={() => { onRefresh() }} refreshing={refreshing}/>}>
+            <ScrollView style={{ padding: 14 }} refreshControl={ <RefreshControl onRefresh={() => { onRefresh() }} refreshing={refreshing}/>}>
                 <Title>Online Doctors</Title>
-                <View>{loading ? <Loading/> : renderDoctors()}</View>
+                <View style={{
+                    padding: 1
+                }}>{loading ? <Loading/> : renderDoctors()}</View>
             </ScrollView>
         </View>
     )

@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { Home, Profile } from '../screen';
+import { Home, Profile, ProfileDoctor } from '../screen';
 
 const Stack = createStackNavigator()
 const HomeStack = () => {
@@ -19,6 +19,15 @@ const HomeStack = () => {
                 component={Profile}
                 options={{
                     headerShown: true,
+                    ...TransitionPresets.FadeFromBottomAndroid
+                }}
+            />
+            <Stack.Screen
+                name="ProfileDoctor"
+                component={ProfileDoctor}
+                options={{
+                    headerShown: true,
+                    headerTitle: "Doctor Profile",
                     ...TransitionPresets.FadeFromBottomAndroid
                 }}
             />

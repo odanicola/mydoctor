@@ -113,5 +113,32 @@ func GetDoctors(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	doctors := []model.Doctors{}
+
+	if len(user) > 0 {
+		for i := 0; i < len(user); i++ {
+			specialist := &model.Specialist{}
+			coll = mgm.Coll(specialist)
+			err := coll.First(bson.M{"doctorid": user[i].ID.Hex()}, specialist)
+
+			if err != nil {
+				log.Println(err.Error())
+			}
+
+			doctors = []model.Doctors{
+				{
+					ID:         user[i].ID.Hex(),
+					Name:       user[i].Name,
+					Photo:      user[i].Photo,
+					Type:       user[i].Type,
+					Email:      user[i].Email,
+					Online:     user[i].Online,
+					Specialist: specialist.Name,
+					Price:      specialist.Price,
+				},
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, doctors)
 }

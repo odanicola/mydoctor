@@ -1,12 +1,15 @@
-import React, { useEffect, useContext } from 'react'
-import { View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useEffect, useContext, useState } from 'react'
+import { View, SafeAreaView, ScrollView, TouchableOpacity, RefreshControl } from 'react-native'
 import { Text, Button, Avatar, Card, Title, Paragraph } from 'react-native-paper'
 import { AuthContext } from '../../navigation/AuthProvider'
 import { useStore, useDispatch } from 'react-redux'
 import * as UserActions from '../../store/actions/userAction'
+import { Loading } from '../../component'
 
 const Home = props => {
     const {user} = useContext(AuthContext);
+    const [loading, setLoading] = useState(false)
+    const [refreshing, setRefereshing] = useState(false)
     const dispatch = useDispatch()
     const store = useStore()
     
@@ -16,7 +19,15 @@ const Home = props => {
     },[])
 
     const loadDoctors = async () => {
+        setLoading(true)
         await dispatch(UserActions.onGetDoctors())
+        setRefereshing(false)
+        setLoading(false)
+    }
+
+    const onRefresh = () => {
+        setRefereshing(true)
+        loadDoctors()
     }
 
     const renderDoctors = () => {
@@ -38,9 +49,9 @@ const Home = props => {
                                     }}>
                                         <View style={{ marginHorizontal: 10, flex: 1 }}>
                                             <Text style={{ fontSize: 16 }}>{item.name}</Text>
-                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis Umum</Text>
+                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis {item.specialist}</Text>
                                         </View>
-                                        <Button mode="outlined">Free</Button>
+                                        <Button mode="outlined">{parseInt(item.price) > 0 ? item.price : 'Free'}</Button>
                                     </View>
                                 </View>
                             </View>
@@ -108,12 +119,13 @@ const Home = props => {
                     </Card.Content>
                 </Card>
             </View>
-            <View style={{
+            
+            <ScrollView style={{
                 padding: 15
-            }}>
+            }} refreshControl={ <RefreshControl onRefresh={() => { onRefresh() }} refreshing={refreshing}/>}>
                 <Title>Online Doctors</Title>
-                {renderDoctors()}
-            </View>
+                <View>{loading ? <Loading/> : renderDoctors()}</View>
+            </ScrollView>
         </View>
     )
 }

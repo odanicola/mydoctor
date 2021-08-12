@@ -4,6 +4,7 @@ import CONSTANT from '../config'
 import Snackbar from 'react-native-snackbar'
 import Helper from '../helper'
 import * as UserActions from '../store/actions/userAction'
+import * as SpecialistActions from '../store/actions/specialistAction'
 import { useDispatch, useStore } from 'react-redux'
 
 export const AuthContext = createContext({});
@@ -46,6 +47,12 @@ export const AuthProvider = ({ children }) => {
             await Helper.storeUserData(getUser)
             await Helper.setUserType(type)
             setType(type)
+
+            if (type == 'doctor') {
+                await dispatch(SpecialistActions.onGetSpecialist(getUser.id))
+                const specialistServer =  store.getState().specialist.specialist 
+                setSpecialist(specialistServer)
+            }
         } else {
             showSnackBar('Failed to save user to server')
             await setLogout()
@@ -58,6 +65,7 @@ export const AuthProvider = ({ children }) => {
             await GoogleSignin.signOut()
             await Helper.removeKeys()
             
+            setSpecialist(null)
             const getType = await Helper.getUserType()
             setType(getType)
             const getUser = await Helper.getUserData()

@@ -2,13 +2,58 @@ import React, { useEffect, useContext } from 'react'
 import { View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
 import { Text, Button, Avatar, Card, Title, Paragraph } from 'react-native-paper'
 import { AuthContext } from '../../navigation/AuthProvider'
+import { useStore, useDispatch } from 'react-redux'
+import * as UserActions from '../../store/actions/userAction'
 
 const Home = props => {
     const {user} = useContext(AuthContext);
+    const dispatch = useDispatch()
+    const store = useStore()
     
     useEffect(() => {
         console.log('user', user)
+        loadDoctors()
     },[])
+
+    const loadDoctors = async () => {
+        await dispatch(UserActions.onGetDoctors())
+    }
+
+    const renderDoctors = () => {
+        const doctors = store.getState().user.doctors
+        
+        var render = []
+        if (doctors && doctors.length > 0) {
+            doctors.map((item,index) => {
+                render.push(
+                    <Card key={item.id}>
+                        <Card.Content>
+                            <View style={{
+                                flexDirection: 'row'
+                            }}>
+                                <Avatar.Image size={60} source={{ uri: item.photo }} />
+                                <View style={{ flex: 1 }}>
+                                    <View style={{
+                                        flexDirection: 'row', alignItems: 'center'
+                                    }}>
+                                        <View style={{ marginHorizontal: 10, flex: 1 }}>
+                                            <Text style={{ fontSize: 16 }}>{item.name}</Text>
+                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis Umum</Text>
+                                        </View>
+                                        <Button mode="outlined">Free</Button>
+                                    </View>
+                                </View>
+                            </View>
+                        </Card.Content>
+                    </Card>
+                )
+            })
+        } else {
+            render.push(<View key={0}><Text>Not found</Text></View>)
+        }
+
+        return render
+    }
 
     return (
         <View style={{
@@ -67,48 +112,7 @@ const Home = props => {
                 padding: 15
             }}>
                 <Title>Online Doctors</Title>
-                <Card>
-                    <Card.Content>
-                        <View style={{
-                            flexDirection: 'row'
-                        }}>
-                            <Avatar.Image size={60} source={{ uri: user.photo }} />
-                            <View style={{ flex: 1 }}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <View style={{ marginHorizontal: 10, flex: 1 }}>
-                                        <Text style={{ fontSize: 16 }}>dr. Indra Wibowo</Text>
-                                        <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis Umum</Text>
-                                    </View>
-                                    <Button mode="outlined">Free</Button>
-                                </View>
-                            </View>
-                        </View>
-                    </Card.Content>
-                </Card>
-                <Card  onPress={() => {
-                    alert('ddd')
-                }}>
-                    <Card.Content>
-                        <View style={{
-                            flexDirection: 'row'
-                        }}>
-                            <Avatar.Image size={60} source={{ uri: user.photo }} />
-                            <View style={{ flex: 1 }}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <View style={{ marginHorizontal: 10, flex: 1 }}>
-                                        <Text style={{ fontSize: 16 }}>dr. Letuce</Text>
-                                        <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Spesialis Umum</Text>
-                                    </View>
-                                    <Button mode="outlined">IDR 15K</Button>
-                                </View>
-                            </View>
-                        </View>
-                    </Card.Content>
-                </Card>
+                {renderDoctors()}
             </View>
         </View>
     )

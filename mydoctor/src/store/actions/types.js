@@ -23,7 +23,12 @@ export const CONNECT = 'CONNECT';
 export const CONNECTED = 'CONNECTED';
 export const DISCONNECT = 'DISCONNECT';
 
-/** */
+/** user */
 export const CREATEUSER = 'CREATEUSER'
 export const UPDATEUSER = 'UPDATEUSER'
 export const USERDISCONNECT = 'USERDISCONNECT'
+export const GETDOCTORS = 'GETDOCTORS'
+
+/** specialist */
+export const CREATESPECIALIST = 'CREATESPECIALIST'
+export const GETSPECIALIST = 'GETSPECIALIST'

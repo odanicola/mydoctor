@@ -1,9 +1,10 @@
 import {
-    CREATEUSER, UPDATEUSER
+    CREATEUSER, UPDATEUSER, GETDOCTORS
   } from '../actions/types';
 
   initialState = {
-    user: null
+    user: null,
+    doctors: []
   };
   
   export default (state = initialState, action) => {
@@ -17,6 +18,11 @@ import {
             return {
                 ...state,
                 user: action.payload.user
+            }
+        case GETDOCTORS: 
+            return {
+                ...state,
+                doctors: action.payload.doctors
             }
         default:
             return state;

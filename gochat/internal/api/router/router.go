@@ -21,5 +21,13 @@ func Setup() *gin.Engine {
 	// Messages
 	v1.POST("/message", controllers.CreateMessage)
 	v1.GET("/message", controllers.LoadMessages)
+
+	// User
+	v1.POST("/user", controllers.CreateUser)
+	v1.GET("/doctors", controllers.GetDoctors)
+
+	// Specialist
+	v1.POST("/specialist", controllers.CreateSpecialist)
+	v1.GET("/specialist", controllers.GetSpecialistByDoctorId)
 	return app
 }

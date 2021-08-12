@@ -6,7 +6,7 @@ export default function Loading() {
     const theme = useTheme()
     return (
         <View style={styles.loadingContainer}>
-        <ActivityIndicator size='large' color={theme.colors.primary} />
+            <ActivityIndicator size='large' color={theme.colors.primary} />
         </View>
     );
 }

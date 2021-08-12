@@ -1,5 +1,5 @@
 import {
-    CREATEUSER, USERDISCONNECT
+    CREATEUSER, USERDISCONNECT, GETDOCTORS
 } from './types'
 import axios from 'axios'
 import CONSTANT from '../../config'
@@ -32,6 +32,20 @@ export const onUserDisconnect = () => {
             dispatch({
                 type: USERDISCONNECT,
                 payload: { user : data }
+            })
+        }).catch(function (error) {
+            console.log('error', error)
+        })
+    }
+}
+
+export const onGetDoctors = () => {
+    return async dispatch => {
+        await axios.get(`${CONSTANT.BACKEND_URL}/v1/doctors`).then(({data}) => {
+            console.log('data', data)
+            dispatch({
+                type: GETDOCTORS,
+                payload: { doctors : data}
             })
         }).catch(function (error) {
             console.log('error', error)

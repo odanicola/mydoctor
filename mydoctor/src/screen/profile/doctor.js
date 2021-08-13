@@ -6,8 +6,9 @@ import * as SocketActions from '../../config/socket'
 import { connect } from 'react-redux'
 
 const ProfileDoctor = props => {
+    const { user } = useContext(AuthContext);
     const { params } = props.route
-    const user = params
+    const doctor = params
 
     useEffect(() => {
         
@@ -24,7 +25,7 @@ const ProfileDoctor = props => {
                     alignItems: 'center',
                     paddingVertical: 15
                 }}>
-                    <Avatar.Image size={120} source={{ uri: user.photo }}/>
+                    <Avatar.Image size={120} source={{ uri: doctor.photo }}/>
                 </View>
             </SafeAreaView>
             <ScrollView>
@@ -34,19 +35,19 @@ const ProfileDoctor = props => {
                     <Card>
                         <Card.Content>
                             <Title>Name</Title>
-                            <Paragraph>dr. {user.name}</Paragraph>
+                            <Paragraph>dr. {doctor.name}</Paragraph>
                         </Card.Content>
                     </Card>
                     <Card>
                         <Card.Content>
                             <Title>Specialist</Title>
-                            <Paragraph>{user.specialist}</Paragraph>
+                            <Paragraph>{doctor.specialist}</Paragraph>
                         </Card.Content>
                     </Card>
                     <Card>
                         <Card.Content>
                             <Title>Price</Title>
-                            <Paragraph>{parseInt(user.price) > 0 ? user.price : 'Free'}</Paragraph>
+                            <Paragraph>{parseInt(doctor.price) > 0 ? doctor.price : 'Free'}</Paragraph>
                         </Card.Content>
                     </Card>
                     <Card>
@@ -56,7 +57,7 @@ const ProfileDoctor = props => {
                         </Card.Content>
                     </Card>
                     <Button mode="contained" style={{ marginVertical: 10 }} onPress={() => {
-                        onLogout()
+                        props.navigation.navigate('Chat', {  })
                     }}>Chat Now</Button>
                 </View>
             </ScrollView>

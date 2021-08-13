@@ -20,7 +20,6 @@ class Chat extends React.Component {
    }
 
    async componentDidUpdate(prevProps, prevState) {
-    //    console.log('didupdate',this.props.chat.messages)
        if (prevState.messages.length !== this.props.chat.messages.length) {
             // await this.onLoadMessages()
        }
@@ -63,7 +62,6 @@ class Chat extends React.Component {
    render() {
        const { messages } = this.state
        const { route, chat } = this.props
-    //    console.log('render',chat.messages)
        return (
            <View style={{
                flex: 1

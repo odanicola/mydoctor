@@ -12,8 +12,8 @@ import (
 )
 
 func CreateRoom(c *gin.Context) {
-	json := model.Room{}
-	err := c.ShouldBindJSON(&json)
+	input := model.Room{}
+	err := c.ShouldBindJSON(&input)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -22,11 +22,24 @@ func CreateRoom(c *gin.Context) {
 
 	room := &model.Room{}
 	coll := mgm.Coll(room)
-	room.Name = json.Name
-	room.Description = json.Description
-	room.Users = json.Users
 
-	err = coll.Create(room)
+	err = coll.First(bson.M{"users": input.Users}, room)
+
+	room.Name = input.Name
+	room.Description = input.Description
+	room.Users = input.Users
+	room.Active = input.Active
+
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			err = coll.Create(room)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	} else {
+		err = mgm.Coll(room).Update(room)
+	}
 
 	if err != nil {
 		log.Println(err)

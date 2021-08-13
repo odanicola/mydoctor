@@ -9,6 +9,7 @@ type Room struct {
 	Name             string   `json:"name" binding:"required"`
 	Description      string   `json:"description" binding:"required"`
 	Users            []string `json:"users" binding:"required"`
+	Active           string   `json:"active" binding:"required"`
 }
 
 type GetRoomById struct {

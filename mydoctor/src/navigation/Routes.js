@@ -4,6 +4,7 @@ import HomeStack from './HomeStack'
 import AuthStack from './AuthStack'
 import IdentityStack from './IdentityStack'
 import SpecialistStack from './SpecialistStack'
+import DoctorStack from './DoctorStack'
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'react-native'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -89,7 +90,7 @@ export default function Routes() {
             type ? 
             type == 'doctor' ?
             specialist ? 
-            <HomeStack /> :
+            <DoctorStack /> :
             <SpecialistStack /> : 
             <HomeStack />:
             <IdentityStack /> :

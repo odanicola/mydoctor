@@ -1,18 +1,48 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View, ScrollView, SafeAreaView } from 'react-native'
 import { Text, Avatar, Card, Title, Paragraph, Button } from 'react-native-paper'
 import { AuthContext } from '../../navigation/AuthProvider'
 import * as SocketActions from '../../config/socket'
-import { connect } from 'react-redux'
+import * as ChatActions from '../../store/actions/chatAction'
+import { connect, useStore } from 'react-redux'
 
 const ProfileDoctor = props => {
     const { user } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false)
     const { params } = props.route
     const doctor = params
+    const store = useStore()
 
     useEffect(() => {
         
     },[])
+
+    const createRoom = async () => {
+        setLoading(true)
+        const data = { 
+            name: `${doctor.id}-${user.id}`, 
+            description: "consultation", 
+            users: [doctor.id,user.id],
+            active: "true"
+        }
+
+        console.log('data', data)
+        await props.onCreateRoom(data)
+        
+        const status = store.getState().chat.status
+        const room = store.getState().chat.room 
+        console.log('room', room)
+        if (status) {
+            const params = {
+                id: room.id,
+                name: user.name
+            }
+            setLoading(false)
+            props.navigation.navigate('Chat', params)
+        }
+
+        setLoading(false)
+    }
 
     return (
         <View style={{
@@ -56,9 +86,13 @@ const ProfileDoctor = props => {
                             <Paragraph>{user.email}</Paragraph>
                         </Card.Content>
                     </Card>
-                    <Button mode="contained" style={{ marginVertical: 10 }} onPress={() => {
-                        props.navigation.navigate('Chat', {  })
-                    }}>Chat Now</Button>
+                    {
+                        loading ?
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', alignContent: 'center', marginVertical: 10}}><Text>Processing...</Text></View>
+                        :<Button mode="contained" style={{ marginVertical: 10 }} onPress={() => {
+                            createRoom()
+                        }}>Chat Now</Button>
+                    }
                 </View>
             </ScrollView>
         </View>
@@ -66,15 +100,16 @@ const ProfileDoctor = props => {
 }
 
 const mapStateToProps = state => {
-    const { socket } = state
+    const { chat } = state
     return {
-        socket: socket
+        chat: chat
     }
 }
 
 const mapDispatchToProps = {
     onConnect: () => SocketActions.connect(),
-    onDisconnect: () => SocketActions.disconnect()
+    onDisconnect: () => SocketActions.disconnect(),
+    onCreateRoom: (data) => ChatActions.onCreateRoom(data)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileDoctor);

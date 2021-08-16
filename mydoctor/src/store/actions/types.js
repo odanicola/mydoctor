@@ -17,6 +17,8 @@ export const LEAVE_CHATROOM = 'LEAVE_CHATROOM';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';
 export const CHAT_ERROR = 'CHAT_ERRO';
 export const CHAT_DISCONNECT = 'CHAT_DISCONNECT';
+export const CREATEROOM = 'CREATEROOM';
+export const GETROOMBYUSERID = 'GETROOMBYUSERID'
 
 /** socket */
 export const CONNECT = 'CONNECT';

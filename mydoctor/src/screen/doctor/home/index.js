@@ -53,7 +53,7 @@ const DoctorHome = props => {
                                     }}>
                                         <View style={{ marginHorizontal: 10, flex: 1 }}>
                                             <Text style={{ fontSize: 16 }}>{item.recipient.name}</Text>
-                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>Hello</Text>
+                                            <Text theme={{ fonts: { light: { fontFamily: 'Oxygen-Light.ttf' }} }} style={{ color: 'grey' }}>{item.messages.text ? item.messages.text : "New Message"}</Text>
                                         </View>
                                         <Button onPress={() => {
                                             props.navigation.navigate('Chat', params)

@@ -68,6 +68,12 @@ export const onGetRoomByUserId = () => {
 
 export const onJoinChatRoom = (data) => {
     return async dispatch => {
+        dispatch({
+            type: LOAD_MESSAGES,
+            payload: {
+                messages: []
+            },
+        });
         await socket.emit('join', data, error => {
             if (error) {
                 console.log('error', error)
@@ -82,7 +88,7 @@ export const onJoinChatRoom = (data) => {
 
         await socket.emit('loadmessages', data, callback => {
             if (callback.status) {
-                // console.log('callback message', callback.message)
+                console.log('callback message', callback.message)
                 dispatch({
                     type: LOAD_MESSAGES,
                     payload: {

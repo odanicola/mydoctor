@@ -93,7 +93,7 @@ export const onJoinChatRoom = (data) => {
         })
         
         await socket.on('message', message => {
-            console.log('message', message)
+            // console.log('message', message)
             dispatch({
                 type: JOIN_CHATROOM,
                 payload: {
@@ -137,7 +137,7 @@ export const onSendMessage = (data) => {
 export const onLeaveRoom = (data) => {
     return async dispatch => {
         console.log('masuk')
-        console.log('room', data)
+        // console.log('room', data)
         socket.emit('leaveroom', data, callback => {
             console.log('has disconnected', callback)
             dispatch({

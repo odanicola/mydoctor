@@ -14,7 +14,6 @@ const Home = props => {
     const store = useStore()
     
     useEffect(() => {
-        console.log('user', user)
         loadDoctors()
     },[])
 

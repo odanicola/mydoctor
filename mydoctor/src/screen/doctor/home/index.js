@@ -30,14 +30,16 @@ const DoctorHome = props => {
     const renderRooms = () => {
         const { chat } = props
         const room = chat.room 
-        console.log('room', room)
-        
+
         var render = []
         if (room && room.length > 0) {
             room.map((item,index) => {
-                const params = {id: item.id, name: user.name}
+                const params = {id: item.id, name: user.name, recipient: {
+                    name: item.recipient.name, 
+                    photo: item.recipient.photo
+                }}
                 render.push(
-                    <Card key={item.id} onPress={() => {
+                    <Card key={item.id} style={{ marginVertical: 5 }}  onPress={() => {
                         props.navigation.navigate('Chat', params)
                     }}>
                         <Card.Content>

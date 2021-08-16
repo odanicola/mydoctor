@@ -26,16 +26,20 @@ const ProfileDoctor = props => {
             active: "true"
         }
 
-        console.log('data', data)
+        // console.log('data', data)
         await props.onCreateRoom(data)
         
         const status = store.getState().chat.status
         const room = store.getState().chat.room 
-        console.log('room', room)
+        // console.log('room', room)
         if (status) {
             const params = {
                 id: room.id,
-                name: user.name
+                name: user.name,
+                recipient: {
+                    name: doctor.name,
+                    photo: doctor.photo
+                },
             }
             setLoading(false)
             props.navigation.navigate('Chat', params)

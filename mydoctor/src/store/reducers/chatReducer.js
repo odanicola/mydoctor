@@ -55,7 +55,7 @@ import {
             }
         case JOIN_CHATROOM:
             var messages = [];
-            console.log('state', state.messages)
+            // console.log('state', state.messages)
             if (state.messages) {
                 messages = filter([...state.messages, action.payload.messages],'_id')
                 messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))

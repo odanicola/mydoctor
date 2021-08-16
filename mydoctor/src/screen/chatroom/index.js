@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { View, Text, SafeAreaView, Button } from 'react-native'
+import { View, SafeAreaView } from 'react-native'
+import { Text, Button, IconButton, Colors, Avatar } from 'react-native-paper'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { connect, useStore, useSelector } from 'react-redux'
 import { onJoinChatRoom, onSendMessage, onLeaveRoom } from '../../store/actions/chatAction'
@@ -8,16 +9,10 @@ import { AuthContext } from '../../navigation/AuthProvider'
 
 const Chat = props => {
     const { user } = useContext(AuthContext);
-    const [messages,setMessages] = useState([])
-
+    
     useEffect(() => {
         joinRoom()
     },[])
-   
-   const onLoadMessages = () => {
-        let messages = props.chat.messages
-        setMessages([...messages, messages])
-   }
 
    const joinRoom = async () => {
         const { route } = props
@@ -60,22 +55,28 @@ const Chat = props => {
         <SafeAreaView>
             <View style={{
                 flexDirection: 'row',
-                padding: 15, 
+                paddingVertical: 10,
                 backgroundColor: 'white',
                 alignItems:'center',
             }}>
-                <Button title={'back'} onPress={() => {
-                    props.navigation.goBack()
-                }}/>
+                <IconButton
+                    icon="arrow-left"
+                    color={Colors.black}
+                    onPress={() => props.navigation.goBack()}
+                />
                 <View style={{
                     flex: 1,
-                    justifyContent: 'center'
+                    justifyContent: 'flex-start', 
+                    flexDirection: 'row', alignItems: 'center'
                 }}>
-                 <Text style={{ fontSize: 16, fontWeight: '700', alignSelf: 'center' }}>Chat Room</Text>
+                    <Avatar.Image size={26} source={{ uri: props.route.params.recipient.photo }} />
+                    <Text style={{ marginLeft: 5 }}>{props.route.params.recipient.name ? props.route.params.recipient.name : 'Chat Room'}</Text>
                 </View>
-                <Button title={'leave'} color={'red'} onPress={() => {
-                    onLeaveRoom()
-                }}/>
+                <IconButton
+                    icon="exit-to-app"
+                    color={Colors.red900}
+                    onPress={() => onLeaveRoom()}
+                />
             </View>
         </SafeAreaView>
         <GiftedChat

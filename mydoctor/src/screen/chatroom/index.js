@@ -70,6 +70,7 @@ const Chat = props => {
         const { route } = props
         const data = route.params
         // await props.onLeaveRoom(data)
+        console.log('data leave', data)
         await socket.emit('leaveroom', data, callback => {})
         const type = await Helper.getUserType()
         setTimeout(() => {

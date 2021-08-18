@@ -12,6 +12,7 @@ import Helper from '../helper'
 import { Loading } from '../component'
 import { useDispatch, useStore } from 'react-redux';
 import * as SpecialistActions from '../store/actions/specialistAction'
+import SplashScreen from 'react-native-splash-screen'
 
 export default function Routes() {
     const { user, setUser, type, setType, specialist, setSpecialist } = useContext(AuthContext);
@@ -20,6 +21,7 @@ export default function Routes() {
     const store = useStore()
 
     useEffect(() => {
+        SplashScreen.hide()
         loginCheck()
         console.log('type', type)
     },[])

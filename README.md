@@ -42,4 +42,5 @@ This app is using Golang and MongoDB to save the messages
 go run main.go
 ```
 
-![Alt text](public/assets/patient-1.png?raw=true "Doctor 1")
+![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/doctor-1.png?raw=true)
+

@@ -60,7 +60,7 @@ const Chat = props => {
         data.room = props.route.params.id
 
         socket.emit('send', data, callback => {
-            console.log('messages on send', callback)
+            // console.log('messages on send', callback)
             setMessages(previousMessages => GiftedChat.append(previousMessages, callback.message))
         })
         

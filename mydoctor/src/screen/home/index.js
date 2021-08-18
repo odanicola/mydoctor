@@ -94,34 +94,6 @@ const Home = props => {
                     </View>
                 </SafeAreaView>
             </View>
-            <View style={{
-                padding: 15
-            }}>
-                <Card>
-                    <Card.Content>
-                        <Text style={{ fontWeight: '200', marginBottom: 10 }}>Latest conversation with</Text>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent:'space-between'
-                        }}>
-                            <Avatar.Image size={26} source={{ uri: user.photo }} />
-                            <View style={{ flex: 1 }}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <View style={{ marginHorizontal: 10, flex: 1 }}>
-                                        <Text>dr. Indra Wibowo</Text>
-                                        <Text style={{ fontSize: 10, color: 'grey' }} theme={{ fonts: { regular: { fontWeight: '100' } } }}>Spesialis Umum</Text>
-                                    </View>
-                                    <Button mode="contained">View</Button>
-                                </View>
-                            </View>
-                            
-                        </View>
-                    </Card.Content>
-                </Card>
-            </View>
             
             <ScrollView style={{ padding: 14 }} refreshControl={ <RefreshControl onRefresh={() => { onRefresh() }} refreshing={refreshing}/>}>
                 <Title>Online Doctors</Title>

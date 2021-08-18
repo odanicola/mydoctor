@@ -88,7 +88,7 @@ const ProfileDoctor = props => {
                     <Card>
                         <Card.Content>
                             <Title>Email</Title>
-                            <Paragraph>{user.email}</Paragraph>
+                            <Paragraph>{doctor.email}</Paragraph>
                         </Card.Content>
                     </Card>
                     {

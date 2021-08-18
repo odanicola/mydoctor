@@ -1,5 +1,11 @@
 # My Doctor Chat App
-A prototype of simple chat app between a doctor and a patient using React Native, NodeJs + SocketIO, and Golang+MongoDB
+A simple chat app between a doctor and a patient using React Native, NodeJs + SocketIO, and Golang+MongoDB
+
+# Screenshots
+## Patient 
+![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-1.png?raw=true)
+
+![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-2.png?raw=true)
 
 # installation
 ## react-native 

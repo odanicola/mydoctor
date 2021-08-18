@@ -5,8 +5,6 @@ A simple chat app between a doctor and a patient using React Native, NodeJs + So
 ## Patient 
 ![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-1.jpg?raw=true)
 
-![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-2.jpg?raw=true)
-
 # installation
 ## react-native 
 This app is using React Native as the front-end 
@@ -47,6 +45,4 @@ This app is using Golang and MongoDB to save the messages
 ```
 go run main.go
 ```
-
-![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/doctor-1.png?raw=true)
 

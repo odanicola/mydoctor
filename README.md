@@ -7,6 +7,8 @@ A simple chat app between a doctor and a patient using React Native, NodeJs + So
 
 ![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-2.jpg?raw=true)
 
+![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/patient-3.jpg?raw=true)
+
 ## Doctor 
 ![alt text](https://github.com/odanicola/mydoctor/blob/1.0.1/public/assets/doctor-1.jpg?raw=true)
 

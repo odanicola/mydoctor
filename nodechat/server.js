@@ -22,7 +22,6 @@ app.use(cors());
 
 // Bodyparser Middleware
 app.use(express.json());
-
 require("./middleware/socket")(app,io);
 
 // Port

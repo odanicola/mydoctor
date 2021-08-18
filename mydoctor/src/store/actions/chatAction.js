@@ -1,11 +1,16 @@
+import axios from 'axios';
 import IO from 'socket.io-client';
 import CONSTANT from '../../config'
+import Helper from '../../helper'
 import {
     JOIN_CHATROOM,
     CHAT_ERROR,
     SEND_MESSAGE,
     LOAD_MESSAGES,
-    LEAVE_CHATROOM
+    LEAVE_CHATROOM,
+    CREATEROOM,
+    GETROOMBYUSERID,
+    SETROOM
 } from '../actions/types'
 
 const socket = IO(CONSTANT.SOCKET_URL, {
@@ -17,8 +22,60 @@ socket.on('connect', () => {
     console.log(socket.disconnected)
 })
 
+export const onCreateRoom = (data) => {
+    return async dispatch => {
+        dispatch({
+            type: CREATEROOM,
+            payload: {
+                status: false,
+                room: []
+            }
+        })
+        await axios.post(`${CONSTANT.BACKEND_URL}/v1/room`,data).then(({data}) => {
+            dispatch({
+                type: CREATEROOM,
+                payload: {
+                    status: true,
+                    room: data
+                }
+            })
+        }).catch(function(error) {
+            console.log('error', error)
+        })
+    }
+}
+
+export const onGetRoomByUserId = () => {
+    return async dispatch => {
+        dispatch({
+            type: CREATEROOM,
+            payload: {
+                room: []
+            }
+        })
+        const user = await Helper.getUserData()
+        await axios.get(`${CONSTANT.BACKEND_URL}/v1/room/user/${user.id}`).then(({data}) => {
+            dispatch({
+                type: CREATEROOM,
+                payload: {
+                    room: data
+                }
+            })
+        }).catch(function (error) {
+            console.log('error', error)
+        })
+    }
+}
+
 export const onJoinChatRoom = (data) => {
     return async dispatch => {
+        console.log('join room data', data)
+        dispatch({
+            type: SETROOM,
+            payload: {
+                room_id: data.id
+            },
+        });
         await socket.emit('join', data, error => {
             if (error) {
                 console.log('error', error)
@@ -33,7 +90,7 @@ export const onJoinChatRoom = (data) => {
 
         await socket.emit('loadmessages', data, callback => {
             if (callback.status) {
-                // console.log('callback message', callback.message)
+                console.log('callback message', callback.message)
                 dispatch({
                     type: LOAD_MESSAGES,
                     payload: {
@@ -44,13 +101,17 @@ export const onJoinChatRoom = (data) => {
         })
         
         await socket.on('message', message => {
-            // console.log('message', message)
-            dispatch({
-                type: JOIN_CHATROOM,
-                payload: {
-                    messages: message
-                },
-            });
+            console.log('message', message)
+            console.log('roomid', message.room_id, data.id)
+            if (message.room_id == data.id) {
+                dispatch({
+                    type: JOIN_CHATROOM,
+                    payload: {
+                        room_id: message.room_id,
+                        messages: message
+                    },
+                });
+            }
         });
     }
 }
@@ -74,13 +135,17 @@ export const onSendMessage = (data) => {
         });
         
         socket.on('message', message => {
-            // console.log('message', message)
-            dispatch({
-                type: JOIN_CHATROOM,
-                payload: {
-                    messages: message
-                },
-            });
+            console.log('message', message)
+            console.log('send message room', message.room, data.room)
+            if (message.room == data.room) {
+                dispatch({
+                    type: JOIN_CHATROOM,
+                    payload: {
+                        room_id: message.room,
+                        messages: message
+                    },
+                });
+            }
         });
     }
 }
@@ -88,7 +153,7 @@ export const onSendMessage = (data) => {
 export const onLeaveRoom = (data) => {
     return async dispatch => {
         console.log('masuk')
-        console.log('room', data)
+        // console.log('room', data)
         socket.emit('leaveroom', data, callback => {
             console.log('has disconnected', callback)
             dispatch({

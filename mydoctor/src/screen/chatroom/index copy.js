@@ -1,61 +1,186 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { View, Text } from 'react-native'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
+import { View, SafeAreaView } from 'react-native'
+import { Text, Button, IconButton, Colors, Avatar } from 'react-native-paper'
 import { GiftedChat } from 'react-native-gifted-chat'
 import { connect, useStore, useSelector } from 'react-redux'
-import { onJoinChatRoom } from '../../store/actions/chatAction'
+import { onJoinChatRoom, onSendMessage, onLeaveRoom } from '../../store/actions/chatAction'
+import Helper from '../../helper'
 import CONSTANT from '../../config'
+import { AuthContext } from '../../navigation/AuthProvider'
 import IO from 'socket.io-client';
 
 const Chat = props => {
-    const [messages, setMessages] = useState([])
-    const [name, setName] = useState(null)
-    const [users, setUsers] = useState(['202101010001', '202101010002'])
-    const store = useStore()
-    const chatMessages = useSelector((state) => state.chat.messages)
     
-    useEffect(() => {
-        const { name } = props.route.params;
-        setName(name)
-        join()
-        
-    },[])
-
-    const join = async () => {
-        const data = {name: props.route.params.name, room: 'infokes', description: 'Konsultasi 10 menit', users: users}
-        await props.onJoinChatRoom(data)
-        loadMessages()
-    }
-
-    const loadMessages = async () => {
-        console.log(store.getState().chat.messages)
-        await setMessages(previousMessages => GiftedChat.append(previousMessages, chatMessages))
-    }
-
-    const onSend = useCallback((messages = []) => {
-        console.log("ini message",messages)
-        setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    const { user } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false)
+    const [messages, setMessages] = useState([])
+    
+    const socket = IO(CONSTANT.SOCKET_URL, {
+        forceNew: false
     })
 
-    return (
-        <GiftedChat
-            messages={messages}
-            onSend={messages => onSend(messages)}
-            user={{
-                _id: 1,
-            }}
-        />
-    )
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log(socket.id)
+            console.log(socket.disconnected)
+        })
+
+        socket.on('message', message => {
+            setMessages(previousMessages => GiftedChat.append(previousMessages, message))
+        })
+        joinRoom()
+    },[])
+
+   const joinRoombak = () => {
+        setLoading(true)
+        const { route } = props
+        const data = route.params
+        props.onJoinChatRoom(data)
+        setTimeout(() => {
+            setLoading(false)
+        }, 300);
+   }
+
+   const joinRoom = async () => {
+        setLoading(true)
+        const { route } = props
+        const data = route.params
+        await socket.emit('join', data, error => {})
+        await socket.emit('loadmessages', data, callback => {
+            if (callback.status) {
+                setMessages(previousMessages => GiftedChat.append(previousMessages, callback.message))
+            }
+        })
+        
+        setTimeout(() => {
+            setLoading(false)
+        }, 300);
+   }
+
+   const onSendBak = async (messages) => {
+        messages = messages.shift()
+        messages.room = props.route.params.id
+        await props.onSendMessage(messages)
+   }
+   
+   const onSendBak1 = async (data) => {
+        data = data.shift()
+        data.room = props.route.params.id
+
+        await socket.emit('send', data, callback => {
+            console.log(callback) 
+            // if (callback.status) {
+            //     setMessages([...messages,callback.message])
+            // }
+        })
+   }
+
+   const onSend = useCallback((message = []) => {
+        var data = message.shift()
+        data.room = props.route.params.id
+
+        socket.emit('send', data, callback => {
+            console.log('messages on send', callback)
+            setMessages(previousMessages => GiftedChat.append(previousMessages, callback.message))
+        })
+        
+    }, [])
+
+   const onLeaveRoom = async () => {
+        const { route } = props
+        const data = route.params
+        await props.onLeaveRoom(data)
+        const type = await Helper.getUserType()
+        setTimeout(() => {
+            if (type == 'doctor') {
+                props.navigation.navigate('DoctorHome')
+            } else {
+                props.navigation.navigate('Home')
+            }
+        }, 300);
+   }
+
+   const filter = (array,key) => {
+        if (array && array.length > 0) {
+            return [...new Map(array.map(item => [item[key], item])).values()]
+        } 
+
+        return array
+   }
+
+   const sort = (messages) => {
+        if (messages && messages.length > 0) {
+            messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+        }
+        return messages
+   }
+
+    console.log('message props', props.chat.messages)
+
+   return (
+    <View style={{
+        flex: 1
+    }}>
+        <SafeAreaView>
+            <View style={{
+                flexDirection: 'row',
+                paddingVertical: 10,
+                backgroundColor: 'white',
+                alignItems:'center',
+            }}>
+                <IconButton
+                    icon="arrow-left"
+                    color={Colors.black}
+                    onPress={() => props.navigation.goBack()}
+                />
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'flex-start', 
+                    flexDirection: 'row', alignItems: 'center'
+                }}>
+                    <Avatar.Image size={26} source={{ uri: props.route.params.recipient.photo }} />
+                    <View>
+                        <Text style={{ marginLeft: 5 }}>{props.route.params.recipient.name ? props.route.params.recipient.name : 'Chat Room'}</Text>
+                        <Text>{props.route.params.id}</Text>
+                    </View>
+                    
+                </View>
+                <IconButton
+                    icon="exit-to-app"
+                    color={Colors.red900}
+                    onPress={() => onLeaveRoom()}
+                />
+            </View>
+        </SafeAreaView>
+        {loading ? null 
+        :<GiftedChat
+            //  messages={filter(props.chat.messages, '_id')}
+             messages={sort(filter(messages,'_id'))}
+             onSend={messages => onSend(messages)}
+             user={{
+                 _id: user.id,
+                 name: user.name
+             }}
+             isTyping={true}
+             textInputStyle={{ color: 'black' }}
+         />}
+    </View>
+)
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     const { chat } = state
     return {
-        chat: chat
+        chat: chat,
+        send_message: chat.send_message_status
     }
 }
 
 const mapDispatchToProps = {
-    onJoinChatRoom: (data) => onJoinChatRoom(data)
+    onJoinChatRoom: (data) => onJoinChatRoom(data),
+    onSendMessage: (data) => onSendMessage(data),
+    onLeaveRoom: (data) => onLeaveRoom(data)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

@@ -1,20 +1,19 @@
 // In App.js in a new project
 
 import * as React from 'react';
-import { View, Text, Button, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from '../screen/home'
 import ChatScreen from '../screen/chatroom'
-import { onLeaveRoom } from '../store/actions/chatAction'
-import { connect } from 'react-redux'
 const Stack = createNativeStackNavigator();
 
-function Routes() {
+function Router() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{
+          
+        }}/>
         <Stack.Screen name="Chat" component={ChatScreen} options={{
           headerShown: false
         }}/>
@@ -23,4 +22,4 @@ function Routes() {
   );
 }
 
-export default Routes;
+export default Router;

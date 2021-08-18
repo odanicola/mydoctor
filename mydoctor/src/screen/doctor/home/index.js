@@ -12,8 +12,14 @@ const DoctorHome = props => {
     const [refreshing, setRefereshing] = useState(false)
     
     useEffect(() => {
-        loadRoom()
-    },[])
+        // loadRoom()
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            // The screen is focused
+            // Call any action
+            loadRoom()
+        });
+        return unsubscribe;
+    },[props.navigation])
 
     const loadRoom = async () => {
         setRefereshing(false)
@@ -35,6 +41,7 @@ const DoctorHome = props => {
         if (room && room.length > 0) {
             room.map((item,index) => {
                 const params = {id: item.id, name: user.name, recipient: {
+                    id: item.recipient.id,
                     name: item.recipient.name, 
                     photo: item.recipient.photo
                 }}

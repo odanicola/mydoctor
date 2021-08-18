@@ -9,7 +9,8 @@ import {
     LOAD_MESSAGES,
     LEAVE_CHATROOM,
     CREATEROOM,
-    GETROOMBYUSERID
+    GETROOMBYUSERID,
+    SETROOM
 } from '../actions/types'
 
 const socket = IO(CONSTANT.SOCKET_URL, {
@@ -68,10 +69,11 @@ export const onGetRoomByUserId = () => {
 
 export const onJoinChatRoom = (data) => {
     return async dispatch => {
+        console.log('join room data', data)
         dispatch({
-            type: LOAD_MESSAGES,
+            type: SETROOM,
             payload: {
-                messages: []
+                room_id: data.id
             },
         });
         await socket.emit('join', data, error => {
@@ -99,13 +101,17 @@ export const onJoinChatRoom = (data) => {
         })
         
         await socket.on('message', message => {
-            // console.log('message', message)
-            dispatch({
-                type: JOIN_CHATROOM,
-                payload: {
-                    messages: message
-                },
-            });
+            console.log('message', message)
+            console.log('roomid', message.room_id, data.id)
+            if (message.room_id == data.id) {
+                dispatch({
+                    type: JOIN_CHATROOM,
+                    payload: {
+                        room_id: message.room_id,
+                        messages: message
+                    },
+                });
+            }
         });
     }
 }
@@ -129,13 +135,17 @@ export const onSendMessage = (data) => {
         });
         
         socket.on('message', message => {
-            // console.log('message', message)
-            dispatch({
-                type: JOIN_CHATROOM,
-                payload: {
-                    messages: message
-                },
-            });
+            console.log('message', message)
+            console.log('send message room', message.room, data.room)
+            if (message.room == data.room) {
+                dispatch({
+                    type: JOIN_CHATROOM,
+                    payload: {
+                        room_id: message.room,
+                        messages: message
+                    },
+                });
+            }
         });
     }
 }

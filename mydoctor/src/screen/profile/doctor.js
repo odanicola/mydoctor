@@ -37,6 +37,7 @@ const ProfileDoctor = props => {
                 id: room.id,
                 name: user.name,
                 recipient: {
+                    id: doctor.id,
                     name: doctor.name,
                     photo: doctor.photo
                 },

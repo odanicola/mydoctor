@@ -5,7 +5,8 @@ import {
     SEND_MESSAGE,
     CREATEROOM,
     LEAVE_CHATROOM,
-    GETROOMBYUSERID
+    GETROOMBYUSERID,
+    SETROOM
   } from '../actions/types';
 
   initialState = {
@@ -13,7 +14,8 @@ import {
     error_message: null,
     send_message_status: false,
     status: false,
-    room: []
+    room: [],
+    room_id: null,
   };
   
   const filter = (array,key) => {
@@ -53,24 +55,36 @@ import {
                 send_message_status: action.payload.status,
                 error_message: action.payload.error_message
             }
+        case SETROOM:
+            return {
+                ...state,
+                room_id: action.payload.room_id,
+                messages: []
+            }
         case JOIN_CHATROOM:
             var messages = [];
-            // console.log('state', state.messages)
+            // messages.push(action.payload.messages)
+            console.log('state room', state.room_id, action.payload.room_id)
             if (state.messages) {
-                messages = filter([...state.messages, action.payload.messages],'_id')
-                messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+                if (state.room_id == action.payload.room_id) {
+                    messages = filter([...state.messages, action.payload.messages],'_id')
+                    messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+                } else {
+                    messages = state.messages
+                }
             } else {
                 messages.push(action.payload.messages)
             }
         
             return {
                 ...state,
+                room_id: action.payload.room_id,
                 messages: messages
             }
         case LOAD_MESSAGES: 
             var messages = action.payload.messages
             var update = state.messages
-
+            console.log('update', update)
             if (messages && messages.length > 0) {
                 messages.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
             

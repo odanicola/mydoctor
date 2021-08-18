@@ -32,26 +32,47 @@ const Chat = props => {
         joinRoom()
     },[])
 
+   const joinRoombak = () => {
+        setLoading(true)
+        const { route } = props
+        const data = route.params
+        props.onJoinChatRoom(data)
+        setTimeout(() => {
+            setLoading(false)
+        }, 300);
+   }
+
    const joinRoom = async () => {
         setLoading(true)
         const { route } = props
         const data = route.params
         await socket.emit('join', data, error => {})
-        setTimeout(() => {
-            setLoading(false)
-            loadMessages()
-        }, 300);
-   }
-
-   const loadMessages = () => {
-        const { route } = props
-        const data = route.params
-        setLoading(true)
-        socket.emit('loadmessages', data, callback => {
+        await socket.emit('loadmessages', data, callback => {
             if (callback.status) {
                 setMessages(previousMessages => GiftedChat.append(previousMessages, callback.message))
             }
+        })
+        
+        setTimeout(() => {
             setLoading(false)
+        }, 300);
+   }
+
+   const onSendBak = async (messages) => {
+        messages = messages.shift()
+        messages.room = props.route.params.id
+        await props.onSendMessage(messages)
+   }
+   
+   const onSendBak1 = async (data) => {
+        data = data.shift()
+        data.room = props.route.params.id
+
+        await socket.emit('send', data, callback => {
+            console.log(callback) 
+            // if (callback.status) {
+            //     setMessages([...messages,callback.message])
+            // }
         })
    }
 
@@ -69,8 +90,7 @@ const Chat = props => {
    const onLeaveRoom = async () => {
         const { route } = props
         const data = route.params
-        // await props.onLeaveRoom(data)
-        await socket.emit('leaveroom', data, callback => {})
+        await props.onLeaveRoom(data)
         const type = await Helper.getUserType()
         setTimeout(() => {
             if (type == 'doctor') {
@@ -96,6 +116,8 @@ const Chat = props => {
         return messages
    }
 
+    console.log('message props', props.chat.messages)
+
    return (
     <View style={{
         flex: 1
@@ -120,7 +142,7 @@ const Chat = props => {
                     <Avatar.Image size={26} source={{ uri: props.route.params.recipient.photo }} />
                     <View>
                         <Text style={{ marginLeft: 5 }}>{props.route.params.recipient.name ? props.route.params.recipient.name : 'Chat Room'}</Text>
-                        
+                        <Text>{props.route.params.id}</Text>
                     </View>
                     
                 </View>
@@ -133,6 +155,7 @@ const Chat = props => {
         </SafeAreaView>
         {loading ? null 
         :<GiftedChat
+            //  messages={filter(props.chat.messages, '_id')}
              messages={sort(filter(messages,'_id'))}
              onSend={messages => onSend(messages)}
              user={{

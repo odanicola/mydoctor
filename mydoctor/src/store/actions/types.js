@@ -19,6 +19,7 @@ export const CHAT_ERROR = 'CHAT_ERRO';
 export const CHAT_DISCONNECT = 'CHAT_DISCONNECT';
 export const CREATEROOM = 'CREATEROOM';
 export const GETROOMBYUSERID = 'GETROOMBYUSERID'
+export const SETROOM = 'SETROOM'
 
 /** socket */
 export const CONNECT = 'CONNECT';

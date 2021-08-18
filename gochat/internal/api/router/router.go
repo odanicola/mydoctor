@@ -17,6 +17,7 @@ func Setup() *gin.Engine {
 	// Room
 	v1.POST("/room", controllers.CreateRoom)
 	v1.GET("/room/:id", controllers.GetRoomById)
+	v1.GET("/room/user/:id", controllers.GetRoomByUserId)
 
 	// Messages
 	v1.POST("/message", controllers.CreateMessage)

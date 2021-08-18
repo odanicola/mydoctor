@@ -19,3 +19,12 @@ type GetRoomById struct {
 	Users       []string   `json:"users"`
 	Messages    []Messages `json:"messages"`
 }
+
+type GetRoomByUserId struct {
+	ID            string   `json:"id"`
+	Name          string   `json:"name"`
+	Description   string   `json:"description"`
+	Users         []string `json:"users"`
+	Recipient     User     `json:"recipient"`
+	LatestMessage Messages `json:"messages"`
+}

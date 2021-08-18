@@ -5,90 +5,27 @@ const uuid = require('uuid')
 
 module.exports = (app,io) => {
     io.on("connection", function (socket) {
-        socket.on("join", async ({name,room,description,users}, callback) => {
-            
+        socket.on("join", async ({id,name}, callback) => {
             const user = {
-                id: socket.id,
-                name: name,
-                room: room
+                id: id,
+                name: name
             }
-            console.log('user: ', user)
-
-            // if (user.room == 'Room1') callback({
-            //     status: false,
-            //     message: "You cannot join the room, because you already left"
-            // })
-
-            socket.join(user.room)
-            
-            const payload = {
-                name: user.room,
-                description: description,
-                users: users
-            }
-
-            console.log('room', socket.rooms)
-
-            // var timeLeft = 10;
-            // var Room = function() {
-            //     this.id = String(Date.now());
-            //     this.running = false;
-            //     console.log(user.room)
-            //     console.log(socket.adapter.rooms[user.room])
-            //     console.log('is running init: ',this.running)
-            //     if (!this.running) {
-            //         this.timer = setInterval(this.timerFunction.bind(this), 1000);
-            //     }
-            // }
-            
-            // Room.prototype.timerFunction = function() {
-            //     // Example
-            //     if (timeLeft == 0) {
-            //         clearInterval(this.timer)
-            //         this.running = false
-            //         console.log('is running init: ',this.running)
-            //     } else {
-            //         this.running = true;
-            //         console.log(`${timeLeft} seconds remaining`)
-            //         console.log('is running init: ',this.running)
-            //         socket.broadcast.to(user.room).emit('timer', {timeLeft: `${timeLeft} seconds remaining`})
-            //         timeLeft--;
-            //     }
-            // }
-            
-            // Create one
-            // new Room();
-
-            // const createroom = await createRoom(payload)
-
-            // if (createroom.error) {
-            //     console.log('createroom error', createroom.error)
-            //     return createroom.error
-            // }
-
-            // const createmessage = await createMessage({
-            //     room_id : createroom.data.id,
-            //     user_id: createroom.data.users[0],
-            //     message: `${createroom.data.users[0]}, has joined the room ${user.room}`
-            // });
-
-            // if (createmessage.error) {
-            //     console.log('createmessage error', createmessage.error)
-            //     return
-            // }
+            socket.join(user.id)
             
             socket.emit('message', {
                 _id: uuid.v4(),
                 text: `${user.name}, welcome to the room`,
                 createdAt: new Date(),
                 system: true,
+                room_id: id
             });
 
-            socket.broadcast.to(user.room).emit('message', {
+            socket.broadcast.to(user.id).emit('message', {
                 _id: uuid.v4(),
                 text: `${user.name} has joined the room`,
                 createdAt: new Date(),
                 system: true,
+                room_id: id
             });
 
             callback()
@@ -96,7 +33,7 @@ module.exports = (app,io) => {
 
         // Load message 
         socket.on("loadmessages", async (data, callback) => {
-            let room = data.room 
+            let room = data.id 
             console.log('room', room)
             const loadmessages = await loadMessages(room)
 
@@ -140,7 +77,7 @@ module.exports = (app,io) => {
                 message: createmessage.error
             })
 
-            socket.emit('message', data);
+            // socket.emit('message', data);
             socket.broadcast.to(data.room).emit('message', data);
             callback({
                 status: true,
@@ -148,17 +85,17 @@ module.exports = (app,io) => {
             })
         });
 
-        socket.on('leaveroom', ({room,name}, callback) => {
+        socket.on('leaveroom', ({id,name}, callback) => {
             // socket.rooms === {}
-            console.log('disconnect', typeof room, socket.id)
-            socket.leave(room.toString())
-            socket.broadcast.to(room.toString()).emit('message', {
+            console.log('disconnect', typeof id, socket.id)
+            socket.leave(id)
+            socket.broadcast.to(id).emit('message', {
                 _id: uuid.v4(),
                 text: `${name} has left the room`,
                 createdAt: new Date(),
                 system: true,
             })
-            socket.disconnect(true)
+            // socket.disconnect(true)
             callback('disconnected')
             console.log('room', socket.rooms)
         });

@@ -46,6 +46,12 @@ const Chat = props => {
 
         joinRoom()
         console.log(user.name,isTyping)
+        return () => {
+            console.log('componentWillUnmount');
+            const { route } = props
+            const data = route.params
+            socket.emit('leaveroom', data, callback => {})
+        };
     },[])
 
    const joinRoom = async () => {

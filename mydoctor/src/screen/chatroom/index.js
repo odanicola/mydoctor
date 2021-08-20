@@ -14,12 +14,13 @@ const Chat = props => {
     const { user } = useContext(AuthContext);
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState([])
-    
+    const [isTyping, setIsTyping] = useState(false)
+    const [typingText, isTypingText] = useState(null)
+
     const socket = IO(CONSTANT.SOCKET_URL, {
         forceNew: false
     })
-
-
+    
     useEffect(() => {
         socket.on('connect', () => {
             console.log(socket.id)
@@ -29,7 +30,28 @@ const Chat = props => {
         socket.on('message', message => {
             setMessages(previousMessages => GiftedChat.append(previousMessages, message))
         })
+
+        socket.on('typing', callback => {
+            console.log('text', callback)
+            if (callback.id != user.id) {
+                if (callback.istyping) {
+                    isTypingText('typing...')
+                } else {
+                    isTypingText(null)
+                }
+            } else {
+                isTypingText(null)
+            }
+        })
+
         joinRoom()
+        console.log(user.name,isTyping)
+        return () => {
+            console.log('componentWillUnmount');
+            const { route } = props
+            const data = route.params
+            socket.emit('leaveroom', data, callback => {})
+        };
     },[])
 
    const joinRoom = async () => {
@@ -54,6 +76,39 @@ const Chat = props => {
             setLoading(false)
         })
    }
+
+   const onTyping = (text) => {
+        const { route } = props
+        const params = route.params
+        console.log('isTyping', isTyping)
+        if (text != "") {
+            setIsTyping(true)
+            const data = {
+                id: params.id, 
+                user: user.id,
+                name: user.name, 
+                text: text,
+                istyping: true
+            }
+            console.log('data typing', data)
+            socket.emit('typing', data, callback => {
+                console.log('callback', callback)
+            })
+        } else {
+            setIsTyping(false)
+            const data = {
+                id: params.id, 
+                user: user.id,
+                name: user.name, 
+                text: text,
+                istyping: false
+            }
+            console.log('data typing', data)
+            socket.emit('typing', data, callback => {
+                console.log('callback', callback)
+            })
+        }
+    }
 
    const onSend = useCallback((message = []) => {
         var data = message.shift()
@@ -121,7 +176,9 @@ const Chat = props => {
                     <Avatar.Image size={26} source={{ uri: props.route.params.recipient.photo }} />
                     <View>
                         <Text style={{ marginLeft: 5 }}>{props.route.params.recipient.name ? props.route.params.recipient.name : 'Chat Room'}</Text>
-                        
+                        {
+                            typingText ? <Text style={{ marginLeft: 5, color: 'grey' }}>{typingText}</Text>:null
+                        }
                     </View>
                     
                 </View>
@@ -140,7 +197,10 @@ const Chat = props => {
                  _id: user.id,
                  name: user.name
              }}
-             isTyping={true}
+             isTyping={isTyping}
+             onInputTextChanged={text => {
+                 onTyping(text)
+             }}
              textInputStyle={{ color: 'black' }}
          />}
     </View>

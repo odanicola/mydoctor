@@ -4,6 +4,11 @@ import {
 import axios from 'axios'
 import CONSTANT from '../../config'
 import Helper from '../../helper'
+import IO from 'socket.io-client';
+
+const socket = IO(CONSTANT.SOCKET_URL, {
+    forceNew: false
+})
 
 export const onCreateUser = (data) => {
     return async dispatch => {
@@ -33,6 +38,9 @@ export const onUserDisconnect = () => {
                 type: USERDISCONNECT,
                 payload: { user : data }
             })
+
+            socket.disconnect()
+            
         }).catch(function (error) {
             console.log('error', error)
         })
